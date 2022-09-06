@@ -1,8 +1,4 @@
-from operator import indexOf
-from pdb import Restart
-from random import random
-from re import T
-from turtle import update
+import random
 
 #copies words into list to be randomly selected from later
 def readWordsIntoList(wordFileName):
@@ -16,7 +12,7 @@ def readWordsIntoList(wordFileName):
         allWords.append( line )
         line = actualFileOpened.readline()
         line = line.rstrip( "\n" ).strip()
-    
+    actualFileOpened.close()
 
     # Return all the words    
     return allWords
@@ -33,19 +29,30 @@ def main():
 
     allWords = readWordsIntoList( nameOfFile )
     #runs word check function
-    printAllWords( allWords )
-    #gameplay( allWords )
+    # printAllWords( allWords )
+    gameplay( allWords, nameOfFile )
 
+def addWords(wordFileName):
+    addWords = input("Would you like to add words to our little game? Y/N ")
+    if addWords == "Y" or addWords == "y":
+        wordAdded = input ("Spell out a word to save to the game: ")
+        file = open( wordFileName, "a" )
+        file.write('\n' + wordAdded )
+        file.close()
+        print( wordAdded + ' added.')
+    
+    
    
 #the actual gqameplay
-def gameplay(allWords):
+def gameplay(allWords, wordFileName):
     word = random.choice(allWords)
     # word = "tonight"
     word_progress = list('-' * len(word))
     word_check = [*word]
-    
-    # playing = True
     guesses = 6
+    winner = False
+
+    
 
     print("Let's play Hangman!!")
     print(word_progress)
@@ -69,21 +76,27 @@ def gameplay(allWords):
         
             if guess == word:
                 print("You Win!!")
+                winner = True
                 break
             elif guess.strip() != "":
                 print("Sorry that guess is incorrect")
                 guesses -=1
         if word_check == word_progress:
             print("You Win!! ")
+            winner = True
             break
  
     
     if guesses == 0:
         print('Sorry you are a deadman GAMEOVER')
-
-    replay = input("Would you like to play a game? Y/N ")
+        print(word)
+    
+    if winner == True:
+        addWords(wordFileName)
+    
+    replay = input("Would you like to play another game? Y/N ")
     if replay == "Y" or replay == "y":
-        gameplay()
+        gameplay(allWords, wordFileName)
     else:
         print("Enjoy your day")
 
